@@ -22,20 +22,18 @@ const hashPassword = (password: string) => {
   return sha256(password).toString();
 };
 
-const select = Prisma.validator<Prisma.UserSelect>()({
-  id: true,
-  name: true,
-  email: true,
-  image: true,
-  password: true
-})
-
 // POST /api/user
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   
   const user = await prisma.user.findUnique({
     where: { email: req.body.username },
-    select: select
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      password: true
+    }
   });
 
   if (user && user.password == hashPassword(req.body.password)) {
